@@ -175,7 +175,6 @@ class SEBNF:
     log.debug("grammar_token: %s->%s"%(metaIdentifier,definition))
     self.repo_keys.append(metaIdentifier)
     self.repo[metaIdentifier]=Word(*definition)
-    self.repo[metaIdentifier].setDebug()
 
   def grammar_rule(self,rule):
     if not self.hasAnnotation(rule,"@rule"): return 
@@ -191,10 +190,10 @@ class SEBNF:
     if self.hasAnnotation(rule,"@start"):
       self.root=metaIdentifier
 
-  def setToDefinition(self,):
-    self.definition
-    
   def grammar(self):
+    """
+      Cree la grammaire 
+    """
     self.repo_keys=[]
     self.repo=dict()
     self.forwards=[]
@@ -211,18 +210,30 @@ class SEBNF:
 #    sys.exit(0)
     
   def text(self,nodelist):
+    """
+      Contenu text du noeud.
+    """
     rc = []
     for node in nodelist:
         if node.nodeType == node.TEXT_NODE:
             rc.append(node.data)
     return ''.join(rc)
     
-  def render(self,ofilename):    
+  def render(self,ofilename,data=None):    
+    """
+      Ecrit les donnees du fichier xml
+    """
+    if not data: data=self.data
     f=open(ofilename,"w")
-    f.write(self.data.toprettyxml())
+    f.write(data.toprettyxml())
     f.close()
             
   def reduce(self):
+    """
+      Reduit l'arbre:
+        - simplifie les noeuds avec un seul fils.
+        - supprime les noeuds avec aucun fils.
+    """
     self.loop=True
     while self.loop:
       self.loop=False
@@ -230,6 +241,9 @@ class SEBNF:
       self.reduceSingle(self.data)
     
   def getTagsCount(self,nodelist):
+    """
+      Count combien de noeud fils de type ELEMENT_NODE contient ce noeud.
+    """
     ret=0
     for node in nodelist:
         if node.nodeType == node.ELEMENT_NODE:
@@ -237,6 +251,10 @@ class SEBNF:
     return ret
 
   def reduceEmpty(self,data):
+    """
+      Si le noeud XML contient aucun fils. Il est supprime,
+      sauf si ce noeud fait parti de la liste de ceux que l'on garde (self.keepTagNames).    
+    """
     if len(data.childNodes)==0 and data.parentNode!=None and data.nodeType!=data.TEXT_NODE and not data.tagName in self.keepTagNames:
       self.loop=True
       log.debug("reduce empty tag %s",data)
@@ -247,6 +265,10 @@ class SEBNF:
         self.reduceEmpty(child)
  
   def reduceSingle(self,data):
+    """
+      Si le noeud XML ne contient qu'un seul fils. Il est remplace par son fils,
+      sauf si ce noeud fait parti de la liste de ceux que l'on garde (self.keepTagNames).    
+    """
     if self.getTagsCount(data.childNodes)==1 and data.nodeType!=data.TEXT_NODE:
       log.debug("reduce single tag %s",data)
       if data.parentNode and not data.tagName in self.keepTagNames: 
@@ -258,6 +280,10 @@ class SEBNF:
       self.reduceSingle(child)
 
   def parse(self,key,str,loc,toks):
+    """
+      Methodes generiques qui construits un dictionaire avec les tokens
+      obtenus et la cle passe en parametres
+    """
     log.debug("%s -> %s"%(key,toks))
     d=dict()
     d[key]=[]
@@ -266,6 +292,14 @@ class SEBNF:
     return d
 
   def add_builtin_parse_function(self):
+    """
+      Ajout des methodes parse_XXX ou XXX est une action pour chaque regles de 
+      la grammaire EBNF. 
+      Ces methodes sont ajouter dynamiquement pendant l'execution.
+      Les methodes actions construisent un repo (self.repo) qui est un
+      dictionnaire avec en cle l'identifiant et valeur la definition de la regle
+      avec des objets pyparsing. 
+    """
     idents=[]
     idents.append("metaidentifier")
     idents.append("token")
@@ -300,15 +334,19 @@ class SEBNF:
     return getattr(self,parseInner.__name__)
 
   def builtin_grammar(self):
+    """
+      Definition de la grammaire EBNF en utilisant bibliotheques pyparsing.
+    """
+    # Initialisation des methodes parseAction pour la grammaires EBNF
     self.add_builtin_parse_function()
-    
+
     self.keepTagNames=[]
-    self.keepTagNames.append("optionalsequence") 
-    self.keepTagNames.append("repeatedsequence") 
-    self.keepTagNames.append("groupedsequence") 
-    self.keepTagNames.append("syntatictermkeep") 
+    self.keepTagNames.append("optionalsequence")
+    self.keepTagNames.append("repeatedsequence")
+    self.keepTagNames.append("groupedsequence")
+    self.keepTagNames.append("syntatictermkeep")
     self.keepTagNames.append("syntactictermsuppress") 
- 
+        
     meta_identfier = Word(alphas, alphanums + '_').setParseAction(self.parse_metaidentifier)
     token          = Word(printables).setParseAction(self.parse_token)
     terminal       = ( Suppress("'") + CharsNotIn("'") + Suppress("'") ^ Suppress('"') + CharsNotIn('"') + Suppress('"') ).setParseAction(self.parse_terminal)                  
