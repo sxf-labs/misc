@@ -1,0 +1,42 @@
+@literal
+mul = "*" ;
+
+@literal
+div = "/" ;
+
+@literal
+add = "+" ;
+
+@literal
+sub = "-" ;
+
+@token
+@keep
+var = @alphas, @alphanums ;
+
+@token
+@keep
+number = @nums ;
+
+@rule
+mulop = mul | div ; 
+
+@rule
+addop = add | sub ;
+
+@rule
+factor = ( ~"(", expression, ~")" ) | var | number ;
+
+@rule
+term = factor, { mulop, factor } ;
+
+@rule
+expression = term, { addop, term } ;
+
+@rule
+assignment = var, ~"=", expression ;
+
+@rule
+@start
+program = { assignment } ;
+
