@@ -25,7 +25,7 @@ class SEBNF:
     buffer=str(f.read())
     f.close()
     try:
-      self.displayRepository()
+#      self.displayRepository()
       self.data=self.repo[self.root].parseString(buffer)
     except ParseException,err:
       f.close()
@@ -187,7 +187,7 @@ class SEBNF:
     else:
       self.repo_keys.append(metaIdentifier)
       self.repo[metaIdentifier]=definition
-    if self.hasAnnotation(rule,"@start"):
+    if not self.hasAnnotation(rule,"@start"):
       self.root=metaIdentifier
 
   def grammar(self):

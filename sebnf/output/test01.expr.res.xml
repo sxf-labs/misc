@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<program>
+	<assignment>
+		<var>a</var>
+		<expression>
+			<number>2</number>
+			<add>+</add>
+			<term>
+				<var>b</var>
+				<mul>*</mul>
+				<var>c</var>
+			</term>
+		</expression>
+	</assignment>
+	<assignment>
+		<var>cd</var>
+		<term>
+			<var>bc</var>
+			<mul>*</mul>
+			<var>de</var>
+		</term>
+	</assignment>
+</program>

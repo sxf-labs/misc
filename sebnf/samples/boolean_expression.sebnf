@@ -1,0 +1,82 @@
+@literal
+TRUE = 'True' ;
+
+@literal
+FALSE = 'False' ;
+
+@literal
+NOT = 'not' ;
+
+@literal
+AND = 'and' ;
+
+@literal
+OR = 'or' ;
+
+@literal
+IN = 'in' ;
+
+@literal
+EQ = '==' ;
+
+@literal
+NE = '!=' ;
+
+@literal
+LE = '<=' ;
+
+@literal
+GE = '>=' ;
+
+@literal
+LT = '<' ;
+
+@literal
+GT = '>' ;
+
+@token
+int = @nums ;
+
+@token
+float = @nums, '.', @nums ;
+
+@token
+ident = @alphas, @alphanums ;
+
+@rule
+booleanPrimary = TRUE | FALSE | ( ~'(', booleanNotExpression, ~')' )
+  ;
+
+@rule
+rel= EQ | NE | GT | LT | GE | LE
+  ;
+
+@rule
+arithmeticExpression = ident | int | float | @string
+  ;
+
+@rule
+relationalExpression =
+  arithmeticExpression, [ rel, arithmeticExpression ]
+  ;
+
+@rule
+booleanAndOrExpression =
+  relationalExpression, [ ( AND | OR ), booleanNotExpression ]
+  ;  
+
+@rule
+booleanExpression =
+  ( booleanAndOrExpression
+  | booleanPrimary
+  );
+
+@rule
+booleanNotExpression = [ NOT ], booleanExpression
+  ;
+  
+@rule
+@start
+program = booleanNotExpression 
+  ;
+

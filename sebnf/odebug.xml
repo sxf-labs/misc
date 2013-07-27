@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<root>
+	<program>
+		<assignment>
+			<var>a</var>
+			<expression>
+				<term>
+					<factor>
+						<number>2</number>
+					</factor>
+				</term>
+				<addop>
+					<add>+</add>
+				</addop>
+				<term>
+					<factor>
+						<var>b</var>
+					</factor>
+					<mulop>
+						<mul>*</mul>
+					</mulop>
+					<factor>
+						<var>c</var>
+					</factor>
+				</term>
+			</expression>
+		</assignment>
+		<assignment>
+			<var>cd</var>
+			<expression>
+				<term>
+					<factor>
+						<var>bc</var>
+					</factor>
+					<mulop>
+						<mul>*</mul>
+					</mulop>
+					<factor>
+						<var>de</var>
+					</factor>
+				</term>
+			</expression>
+		</assignment>
+	</program>
+</root>

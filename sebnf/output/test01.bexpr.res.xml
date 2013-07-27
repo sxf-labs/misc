@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<booleanAndOrExpression>
+	<relationalExpression>
+		<ident>a</ident>
+		<EQ>==</EQ>
+		<ident>b</ident>
+	</relationalExpression>
+	<AND>and</AND>
+	<booleanAndOrExpression>
+		<relationalExpression>
+			<ident>c</ident>
+			<GT>&gt;</GT>
+			<int>12</int>
+		</relationalExpression>
+		<OR>or</OR>
+		<relationalExpression>
+			<ident>b</ident>
+			<EQ>==</EQ>
+			<ident>c</ident>
+		</relationalExpression>
+	</booleanAndOrExpression>
+</booleanAndOrExpression>
